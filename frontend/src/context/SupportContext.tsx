@@ -1,8 +1,30 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
-import type { Ticket, TicketFilterTab, TicketStatus } from '../types/ticket';
+import React, { createContext, useContext, useMemo } from 'react';
+import type { Ticket, TicketFilterTab, TicketMessage, TicketStatus } from '../types/ticket';
 import type { UserProfile } from '../types/user';
-import { initialTickets, currentUser } from '../data/mockTickets';
-import webhookService from '../services/webhookService';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import {
+  setFilter as setFilterAction,
+  setActiveNav as setActiveNavAction,
+  setSearchQuery as setSearchQueryAction,
+  setSelectedTicketId,
+  openCreateModal as openCreateModalAction,
+  closeCreateModal as closeCreateModalAction,
+  openKnowledgeBase as openKnowledgeBaseAction,
+  closeKnowledgeBase as closeKnowledgeBaseAction,
+  openContactModal as openContactModalAction,
+  closeContactModal as closeContactModalAction,
+  toggleMobileSidebar as toggleMobileSidebarAction,
+  closeMobileSidebar as closeMobileSidebarAction,
+} from '../store/slices/uiSlice';
+import {
+  addTicket,
+  updateTicketClassification,
+  addMessageToTicket as addMessageAction,
+} from '../store/slices/ticketsSlice';
+import {
+  useCreateTicketMutation,
+  useSendTicketReplyMutation,
+} from '../store/api/supportApi';
 
 interface SupportContextType {
   user: UserProfile;
@@ -35,33 +57,57 @@ interface SupportContextType {
     priority?: Ticket['priority'];
   }) => Ticket;
   addMessageToTicket: (ticketId: string, messageText: string) => void;
+  isSubmittingTicket: boolean;
 }
 
 const SupportContext = createContext<SupportContextType | undefined>(undefined);
 
 export const SupportProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user] = useState<UserProfile>(currentUser);
-  const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
-  const [filter, setFilter] = useState<TicketFilterTab>('all');
-  const [activeNav, setActiveNav] = useState<string>('home');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
-  const [isKnowledgeBaseOpen, setIsKnowledgeBaseOpen] = useState<boolean>(false);
-  const [isContactModalOpen, setIsContactModalOpen] = useState<boolean>(false);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
-  const openCreateModal = () => setIsCreateModalOpen(true);
-  const closeCreateModal = () => setIsCreateModalOpen(false);
+  // State from Redux
+  const user = useAppSelector((state) => state.tickets.user);
+  const tickets = useAppSelector((state) => state.tickets.items);
+  const {
+    filter,
+    activeNav,
+    searchQuery,
+    selectedTicketId,
+    isCreateModalOpen,
+    isKnowledgeBaseOpen,
+    isContactModalOpen,
+    isMobileSidebarOpen,
+  } = useAppSelector((state) => state.ui);
 
-  const openKnowledgeBase = () => setIsKnowledgeBaseOpen(true);
-  const closeKnowledgeBase = () => setIsKnowledgeBaseOpen(false);
+  // RTK Query Mutations
+  const [createTicketTrigger, { isLoading: isSubmittingTicket }] = useCreateTicketMutation();
+  const [sendReplyTrigger] = useSendTicketReplyMutation();
 
-  const openContactModal = () => setIsContactModalOpen(true);
-  const closeContactModal = () => setIsContactModalOpen(false);
+  // Selected ticket derived dynamically so message updates reflect immediately in UI
+  const selectedTicket = useMemo(() => {
+    if (!selectedTicketId) return null;
+    return tickets.find((t) => t.id === selectedTicketId) || null;
+  }, [tickets, selectedTicketId]);
 
-  const toggleMobileSidebar = () => setIsMobileSidebarOpen((prev) => !prev);
-  const closeMobileSidebar = () => setIsMobileSidebarOpen(false);
+  const setSelectedTicket = (ticket: Ticket | null) => {
+    dispatch(setSelectedTicketId(ticket ? ticket.id : null));
+  };
+
+  const openCreateModal = () => dispatch(openCreateModalAction());
+  const closeCreateModal = () => dispatch(closeCreateModalAction());
+
+  const openKnowledgeBase = () => dispatch(openKnowledgeBaseAction());
+  const closeKnowledgeBase = () => dispatch(closeKnowledgeBaseAction());
+
+  const openContactModal = () => dispatch(openContactModalAction());
+  const closeContactModal = () => dispatch(closeContactModalAction());
+
+  const toggleMobileSidebar = () => dispatch(toggleMobileSidebarAction());
+  const closeMobileSidebar = () => dispatch(closeMobileSidebarAction());
+
+  const setFilter = (newFilter: TicketFilterTab) => dispatch(setFilterAction(newFilter));
+  const setActiveNav = (nav: string) => dispatch(setActiveNavAction(nav));
+  const setSearchQuery = (query: string) => dispatch(setSearchQueryAction(query));
 
   const filteredTickets = useMemo(() => {
     return tickets.filter((ticket) => {
@@ -69,11 +115,12 @@ export const SupportProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const matchesFilter = filter === 'all' ? true : ticket.status === filter;
 
       // Search query filtering
-      const matchesSearch = searchQuery.trim() === ''
-        ? true
-        : ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          ticket.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          ticket.ticketNumber.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch =
+        searchQuery.trim() === ''
+          ? true
+          : ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            ticket.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            ticket.ticketNumber.toLowerCase().includes(searchQuery.toLowerCase());
 
       return matchesFilter && matchesSearch;
     });
@@ -123,30 +170,77 @@ export const SupportProvider: React.FC<{ children: React.ReactNode }> = ({ child
           id: `msg-${Date.now() + 1}`,
           sender: 'system',
           senderName: 'AI Support Assistant',
-          text: 'Ticket has been raised successfully. Our support squad and automated workflows have been notified.',
+          text: 'Ticket has been logged. Our AI agent is currently analyzing your request and initiating resolution...',
           timestamp: `${formattedDate} · ${formattedTime}`,
         },
       ],
     };
 
-    setTickets((prev) => [newTicket, ...prev]);
+    // 1. Immediately store in Redux for optimistic UI update
+    dispatch(addTicket(newTicket));
 
-    // Asynchronously dispatch to n8n webhook for AI triage and processing
-    webhookService.forwardTicketQuery(newTicket).then((aiResponse) => {
-      if (aiResponse && (aiResponse.classifiedCategory || aiResponse.classifiedPriority)) {
-        setTickets((prev) =>
-          prev.map((t) =>
-            t.id === newTicket.id
-              ? {
-                  ...t,
-                  category: aiResponse.classifiedCategory || t.category,
-                  priority: aiResponse.classifiedPriority || t.priority,
-                }
-              : t
-          )
-        );
-      }
-    });
+    // 2. Dispatch to n8n webhook via RTK Query mutation
+    createTicketTrigger({
+      ticketNumber: newTicket.ticketNumber,
+      title: newTicket.title,
+      description: newTicket.description,
+      customerName: newTicket.customerName,
+      customerEmail: newTicket.customerEmail,
+      createdAt: newTicket.createdAt,
+      source: 'customer_support_portal',
+    })
+      .unwrap()
+      .then((aiResponse) => {
+        if (!aiResponse) return;
+
+        // A. Update Category & Priority if classified by AI
+        if (aiResponse.classifiedCategory || aiResponse.classifiedPriority) {
+          dispatch(
+            updateTicketClassification({
+              ticketId: newTicket.id,
+              category: aiResponse.classifiedCategory,
+              priority: aiResponse.classifiedPriority,
+            })
+          );
+        }
+
+        // B. CRITICAL: Append the AI Agent's response message/solution to the chat!
+        const aiMessageText =
+          aiResponse.message ||
+          aiResponse.suggestedSolution ||
+          aiResponse.reply;
+
+        if (aiMessageText && typeof aiMessageText === 'string') {
+          const aiResponseTime = new Date();
+          const responseDate = aiResponseTime.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          });
+          const responseTime = aiResponseTime.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+
+          const aiMessage: TicketMessage = {
+            id: `msg-ai-${Date.now()}`,
+            sender: 'agent',
+            senderName: 'AI Support Agent',
+            text: aiMessageText,
+            timestamp: `${responseDate} · ${responseTime}`,
+          };
+
+          dispatch(
+            addMessageAction({
+              ticketId: newTicket.id,
+              message: aiMessage,
+            })
+          );
+        }
+      })
+      .catch((err) => {
+        console.warn('Webhook dispatch notice (using local offline state):', err);
+      });
 
     return newTicket;
   };
@@ -165,36 +259,61 @@ export const SupportProvider: React.FC<{ children: React.ReactNode }> = ({ child
       minute: '2-digit',
     });
 
-    const newMessage = {
+    const newMessage: TicketMessage = {
       id: `msg-${Date.now()}`,
-      sender: 'customer' as const,
+      sender: 'customer',
       senderName: user.name,
       text: messageText,
       timestamp: `${formattedDate} · ${formattedTime}`,
     };
 
-    setTickets((prev) =>
-      prev.map((t) => {
-        if (t.id === ticketId) {
-          return {
-            ...t,
-            messages: [...(t.messages || []), newMessage],
-          };
-        }
-        return t;
+    // 1. Add user reply to Redux
+    dispatch(
+      addMessageAction({
+        ticketId,
+        message: newMessage,
       })
     );
 
-    if (selectedTicket && selectedTicket.id === ticketId) {
-      setSelectedTicket((prev) =>
-        prev
-          ? {
-              ...prev,
-              messages: [...(prev.messages || []), newMessage],
-            }
-          : null
-      );
-    }
+    // 2. Forward reply to webhook / n8n workflow
+    const currentTicket = tickets.find((t) => t.id === ticketId);
+    sendReplyTrigger({
+      ticketId,
+      ticketNumber: currentTicket?.ticketNumber,
+      message: messageText,
+      customerName: user.name,
+      timestamp: now.toISOString(),
+    })
+      .unwrap()
+      .then((response) => {
+        // If AI or agent responds back to the follow-up message
+        const replyText = response?.message || response?.reply || response?.suggestedSolution;
+        if (replyText && typeof replyText === 'string') {
+          const replyTime = new Date();
+          dispatch(
+            addMessageAction({
+              ticketId,
+              message: {
+                id: `msg-ai-${Date.now()}`,
+                sender: 'agent',
+                senderName: 'AI Support Agent',
+                text: replyText,
+                timestamp: `${replyTime.toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })} · ${replyTime.toLocaleTimeString('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}`,
+              },
+            })
+          );
+        }
+      })
+      .catch((err) => {
+        console.warn('Reply webhook notice:', err);
+      });
   };
 
   return (
@@ -225,6 +344,7 @@ export const SupportProvider: React.FC<{ children: React.ReactNode }> = ({ child
         closeMobileSidebar,
         createTicket,
         addMessageToTicket,
+        isSubmittingTicket,
       }}
     >
       {children}
