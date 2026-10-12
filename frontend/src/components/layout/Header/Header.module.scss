@@ -1,0 +1,207 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.header {
+  height: $header-height;
+  padding: 0 32px;
+  @include flex-between;
+  background-color: transparent;
+  position: relative;
+  z-index: 20;
+
+  @include mobile {
+    padding: 0 16px;
+    background-color: #ffffff;
+    border-bottom: 1px solid $color-border-default;
+  }
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+}
+
+.mobileMenuBtn {
+  display: none;
+  color: $color-text-title;
+  padding: 8px;
+  border-radius: $radius-md;
+
+  @include mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:hover {
+    background-color: $color-primary-light;
+  }
+}
+
+.rightSection {
+  position: relative;
+  margin-left: auto;
+}
+
+.userProfileBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: $radius-full;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: rgba(15, 23, 42, 0.04);
+  }
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #1e293b;
+  color: #ffffff;
+  @include flex-center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+}
+
+.userName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $color-text-title;
+}
+
+.chevron {
+  color: $color-text-muted;
+  transition: transform $transition-fast;
+
+  &.rotate {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 260px;
+  background-color: #ffffff;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border-default;
+  box-shadow: $shadow-lg;
+  padding: 8px 0;
+  animation: fadeIn 0.15s ease-out;
+  z-index: 50;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.menuAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #1e293b;
+  color: #ffffff;
+  @include flex-center;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  flex-shrink: 0;
+}
+
+.menuUserDetails {
+  overflow: hidden;
+}
+
+.menuName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $color-text-title;
+  @include truncate-single;
+}
+
+.menuEmail {
+  font-size: 0.75rem;
+  color: $color-text-muted;
+  @include truncate-single;
+  margin-top: 1px;
+}
+
+.roleBadge {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: $radius-full;
+  background-color: $color-primary-light;
+  color: $color-primary;
+}
+
+.divider {
+  height: 1px;
+  background-color: $color-border-subtle;
+  margin: 6px 0;
+}
+
+.dropdownItems {
+  display: flex;
+  flex-direction: column;
+}
+
+.menuItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  font-size: 0.875rem;
+  color: $color-text-body;
+  text-align: left;
+  transition: all $transition-fast;
+
+  &:hover {
+    background-color: #f8fafc;
+    color: $color-text-title;
+
+    .itemIcon {
+      color: $color-primary;
+    }
+  }
+
+  &.logoutItem {
+    color: #ef4444;
+
+    &:hover {
+      background-color: #fef2f2;
+      color: #dc2626;
+
+      .itemIcon {
+        color: #dc2626;
+      }
+    }
+  }
+}
+
+.itemIcon {
+  color: $color-text-muted;
+  transition: color $transition-fast;
+}

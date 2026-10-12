@@ -1,0 +1,68 @@
+// Reusable SASS Mixins
+@use './variables' as *;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin card-surface {
+  background-color: $color-bg-card;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-xs;
+  transition: box-shadow $transition-normal, border-color $transition-normal;
+
+  &:hover {
+    box-shadow: $shadow-sm;
+  }
+}
+
+@mixin truncate-single {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.4);
+    border-radius: 9999px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.7);
+  }
+}
+
+// Media Queries
+@mixin tablet {
+  @media (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin small-mobile {
+  @media (max-width: 480px) {
+    @content;
+  }
+}

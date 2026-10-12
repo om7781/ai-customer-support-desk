@@ -1,0 +1,46 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.securityCard {
+  background-color: #eef2ff;
+  border: 1px solid #dbeafe;
+  border-radius: $radius-lg;
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  box-shadow: $shadow-xs;
+}
+
+.iconWrapper {
+  color: #2563eb;
+  background-color: #dbeafe;
+  padding: 6px;
+  border-radius: $radius-md;
+  @include flex-center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.shieldIcon {
+  stroke-width: 2.2;
+}
+
+.textContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  line-height: 1.3;
+}
+
+.description {
+  font-size: 0.78125rem;
+  color: #3b82f6;
+  margin-top: 4px;
+  line-height: 1.45;
+}

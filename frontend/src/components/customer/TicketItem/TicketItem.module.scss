@@ -1,0 +1,166 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.ticketRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  background-color: transparent;
+  border-bottom: 1px solid $color-border-subtle;
+  transition: all $transition-fast;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: #f8fafc;
+
+    .ticketTitle {
+      color: $color-primary;
+    }
+
+    .chevron {
+      color: $color-primary;
+      transform: translateX(3px);
+    }
+  }
+
+  @include mobile {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+  }
+}
+
+.iconBadge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  @include flex-center;
+  flex-shrink: 0;
+  transition: transform $transition-fast;
+
+  &.catLogin {
+    background-color: $cat-login-bg;
+    color: $cat-login-icon;
+  }
+
+  &.catBilling {
+    background-color: $cat-billing-bg;
+    color: $cat-billing-icon;
+  }
+
+  &.catFeature {
+    background-color: $cat-feature-bg;
+    color: $cat-feature-icon;
+  }
+
+  &.catPayment {
+    background-color: $cat-payment-bg;
+    color: $cat-payment-icon;
+  }
+
+  &.catAccount {
+    background-color: $cat-account-bg;
+    color: $cat-account-icon;
+  }
+}
+
+.detailsCol {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ticketTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $color-text-title;
+  line-height: 1.3;
+  @include truncate-single;
+  transition: color $transition-fast;
+}
+
+.ticketDescription {
+  font-size: 0.8125rem;
+  color: $color-text-body;
+  margin-top: 3px;
+  @include truncate-single;
+}
+
+.ticketNumber {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $color-text-muted;
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+}
+
+.metaCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+
+  @include mobile {
+    margin-left: auto;
+  }
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: $radius-full;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+
+  &.statusOpen {
+    background-color: $status-open-bg;
+    color: $status-open-text;
+  }
+
+  &.statusInProgress {
+    background-color: $status-inprogress-bg;
+    color: $status-inprogress-text;
+  }
+
+  &.statusResolved {
+    background-color: $status-resolved-bg;
+    color: $status-resolved-text;
+  }
+
+  &.statusClosed {
+    background-color: $status-closed-bg;
+    color: $status-closed-text;
+  }
+}
+
+.timestamp {
+  font-size: 0.75rem;
+  color: $color-text-muted;
+  white-space: nowrap;
+}
+
+.arrowCol {
+  flex-shrink: 0;
+  @include flex-center;
+  color: $color-text-subtle;
+  padding-left: 4px;
+}
+
+.chevron {
+  transition: transform $transition-fast, color $transition-fast;
+}

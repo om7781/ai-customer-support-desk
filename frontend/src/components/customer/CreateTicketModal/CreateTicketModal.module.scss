@@ -1,0 +1,214 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  @include flex-center;
+  z-index: 100;
+  padding: 16px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 520px;
+  background-color: #ffffff;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-modal;
+  overflow: hidden;
+  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(16px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modalHeader {
+  @include flex-between;
+  padding: 22px 26px;
+  border-bottom: 1px solid $color-border-subtle;
+}
+
+.modalTitle {
+  font-size: 1.1875rem;
+  font-weight: 700;
+  color: $color-text-title;
+  letter-spacing: -0.01em;
+}
+
+.modalSubtitle {
+  font-size: 0.8125rem;
+  color: $color-text-body;
+  margin-top: 3px;
+}
+
+.closeBtn {
+  color: $color-text-muted;
+  padding: 6px;
+  border-radius: $radius-sm;
+  transition: all $transition-fast;
+
+  &:hover {
+    color: $color-text-title;
+    background-color: #f1f5f9;
+  }
+}
+
+.ticketForm {
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.formRow {
+  display: flex;
+  gap: 14px;
+
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: $color-text-title;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.input,
+.select,
+.textarea {
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.aiTagNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+  border-radius: $radius-md;
+  border: 1px solid #bfdbfe;
+  font-size: 0.8125rem;
+  color: #1e3a8a;
+  line-height: 1.45;
+
+  strong {
+    color: #1d4ed8;
+  }
+}
+
+.sparkleIcon {
+  color: #3b82f6;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid $color-border-subtle;
+}
+
+.cancelBtn {
+  padding: 9px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $color-text-body;
+  border-radius: $radius-md;
+
+  &:hover {
+    background-color: #f1f5f9;
+    color: $color-text-title;
+  }
+}
+
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: $color-primary;
+  border-radius: $radius-md;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
+}
+
+.successState {
+  padding: 48px 24px;
+  @include flex-center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.successIcon {
+  color: #16a34a;
+  margin-bottom: 16px;
+  animation: scaleBounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleBounce {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.successTitle {
+  font-size: 1.1875rem;
+  font-weight: 700;
+  color: $color-text-title;
+}
+
+.successMessage {
+  font-size: 0.875rem;
+  color: $color-text-body;
+  margin-top: 6px;
+  max-width: 340px;
+}

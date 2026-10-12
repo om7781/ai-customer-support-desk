@@ -1,0 +1,130 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.sectionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.headerRow {
+  @include flex-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.titleInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: $color-text-title;
+  letter-spacing: -0.01em;
+}
+
+.sectionSubtitle {
+  font-size: 0.8125rem;
+  color: $color-text-body;
+  margin-top: 2px;
+}
+
+.filterPills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pillBtn {
+  padding: 6px 16px;
+  border-radius: $radius-full;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $color-text-body;
+  background-color: transparent;
+  border: 1px solid $color-border-default;
+  transition: all $transition-fast;
+
+  &:hover {
+    background-color: #f1f5f9;
+    color: $color-text-title;
+  }
+
+  &.active {
+    background-color: $color-primary;
+    color: #ffffff;
+    border-color: $color-primary;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+  }
+}
+
+.ticketsCard {
+  background-color: $color-bg-card;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-xs;
+  overflow: hidden;
+  transition: box-shadow $transition-normal;
+
+  &:hover {
+    box-shadow: $shadow-sm;
+  }
+}
+
+.ticketList {
+  display: flex;
+  flex-direction: column;
+}
+
+.emptyState {
+  padding: 48px 24px;
+  @include flex-center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.emptyIconCircle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  @include flex-center;
+  color: $color-text-muted;
+  margin-bottom: 14px;
+}
+
+.emptyTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $color-text-title;
+}
+
+.emptySubtitle {
+  font-size: 0.875rem;
+  color: $color-text-body;
+  margin-top: 4px;
+  max-width: 320px;
+}
+
+.emptyActionBtn {
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background-color: $color-primary-light;
+  color: $color-primary;
+  border-radius: $radius-md;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid $color-primary-subtle;
+  transition: all $transition-fast;
+
+  &:hover {
+    background-color: #dbeafe;
+  }
+}

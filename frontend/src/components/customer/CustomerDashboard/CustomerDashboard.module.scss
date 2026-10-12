@@ -1,0 +1,39 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 32px;
+  align-items: start;
+  max-width: 1440px;
+  margin: 0 auto;
+
+  @include tablet {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 24px;
+  }
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+.primaryColumn {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; // Essential for text truncation within flex items
+}
+
+.secondaryColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 24px;
+
+  @media (max-width: 960px) {
+    position: static;
+  }
+}

@@ -1,0 +1,173 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  @include flex-center;
+  z-index: 100;
+  padding: 16px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 580px;
+  background-color: #ffffff;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-modal;
+  overflow: hidden;
+}
+
+.modalHeader {
+  @include flex-between;
+  padding: 22px 26px;
+  border-bottom: 1px solid $color-border-subtle;
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #eff6ff;
+  color: $color-primary;
+  @include flex-center;
+}
+
+.modalTitle {
+  font-size: 1.1875rem;
+  font-weight: 700;
+  color: $color-text-title;
+}
+
+.modalSubtitle {
+  font-size: 0.8125rem;
+  color: $color-text-body;
+  margin-top: 2px;
+}
+
+.closeBtn {
+  color: $color-text-muted;
+  padding: 6px;
+  border-radius: $radius-sm;
+
+  &:hover {
+    color: $color-text-title;
+    background-color: #f1f5f9;
+  }
+}
+
+.contactBody {
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.availabilityBanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 10px 14px;
+  border-radius: $radius-md;
+  font-size: 0.78125rem;
+  color: #166534;
+  font-weight: 500;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+}
+
+.channelGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.channelCard {
+  border: 1px solid $color-border-default;
+  border-radius: $radius-lg;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: #ffffff;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $color-primary;
+    box-shadow: $shadow-xs;
+  }
+}
+
+.channelIcon {
+  color: $color-primary;
+  margin-bottom: 4px;
+}
+
+.channelTitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: $color-text-title;
+}
+
+.channelDesc {
+  font-size: 0.8125rem;
+  color: $color-text-body;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.channelBtn {
+  margin-top: 8px;
+  display: inline-flex;
+  padding: 6px 12px;
+  background-color: $color-primary-light;
+  color: $color-primary;
+  border-radius: $radius-sm;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  width: fit-content;
+
+  &:hover {
+    background-color: #dbeafe;
+  }
+}
+
+.channelLink {
+  margin-top: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: $color-primary;
+}
+
+.hoursBadge {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #16a34a;
+}

@@ -1,0 +1,72 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.widgetCard {
+  background-color: $color-bg-card;
+  border: 1px solid $color-border-default;
+  border-radius: $radius-xl;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: $shadow-xs;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: #cbd5e1;
+    box-shadow: $shadow-sm;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iconCircle {
+  color: $color-primary;
+  @include flex-center;
+}
+
+.bulbIcon {
+  stroke-width: 2.2;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $color-text-title;
+  letter-spacing: -0.01em;
+}
+
+.description {
+  font-size: 0.84375rem;
+  color: $color-text-body;
+  line-height: 1.5;
+}
+
+.linkButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $color-primary;
+  padding: 2px 0;
+  margin-top: 4px;
+  width: fit-content;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-primary-hover;
+
+    .arrow {
+      transform: translateX(4px);
+    }
+  }
+}
+
+.arrow {
+  transition: transform $transition-fast;
+}
